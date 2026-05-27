@@ -71,8 +71,3 @@ deliverables/
 - Build interactive BI dashboard (Tableau/Power BI).
 - Add statistical decomposition and forecasting.
 - Integrate exogenous factors (weather/events/work patterns).
-
-## Resume Bullets (Polished)
-- Built an end-to-end Python analytics pipeline on 25+ years of CTA daily ridership data (2001–2026), including data quality checks, feature engineering, and export-ready summary tables.
-- Delivered executive-ready insights on post-pandemic demand recovery by quantifying annual ridership, bus/rail mode share shifts, and 2019 baseline recovery percentages.
-- Produced clear, stakeholder-friendly visualizations of seasonal trends and weekday/weekend behavior to inform transit service planning recommendations.
