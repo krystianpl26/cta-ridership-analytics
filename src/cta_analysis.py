@@ -198,6 +198,16 @@ def main() -> None:
     df = pd.read_csv(RAW_PATH)
     df = clean_column_names(df)
     df["service_date"] = pd.to_datetime(df["service_date"])
+    numeric_cols = ["bus", "rail_boardings", "total_rides"]
+
+    for col in numeric_cols:
+        df[col] = (
+            df[col]
+            .astype(str)
+            .str.replace(",", "", regex=False)
+            .str.strip()
+        )
+    df[col] = pd.to_numeric(df[col], errors="coerce")
 
     # 4-5) Validate totals + features
     validated = validate_totals(df)
