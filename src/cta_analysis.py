@@ -59,6 +59,24 @@ def add_engineered_columns(df: pd.DataFrame) -> pd.DataFrame:
 def validate_totals(df: pd.DataFrame) -> pd.DataFrame:
     """Check whether bus + rail is close to total rides."""
     out = df.copy()
+
+    numeric_cols = ["bus", "rail_boardings", "total_rides"]
+
+    for col in numeric_cols:
+        out[col] = (
+            out[col]
+            .astype(str)
+            .str.replace(",", "", regex=False)
+            .str.strip()
+        )
+        out[col] = pd.to_numeric(out[col], errors="coerce")
+
+    if out[numeric_cols].isnull().any().any():
+        missing_counts = out[numeric_cols].isnull().sum()
+        raise ValueError(
+            f"Numeric conversion failed. Missing values found:\n{missing_counts}"
+        )
+
     out["components_sum"] = out["bus"] + out["rail_boardings"]
     out["difference"] = out["total_rides"] - out["components_sum"]
     out["difference_pct_of_total"] = np.where(
@@ -66,6 +84,7 @@ def validate_totals(df: pd.DataFrame) -> pd.DataFrame:
         out["difference"] / out["total_rides"],
         np.nan,
     )
+
     return out
 
 
