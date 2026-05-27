@@ -35,21 +35,6 @@ def clean_column_names(df: pd.DataFrame) -> pd.DataFrame:
     return df
 
 
-def coerce_numeric_columns(df: pd.DataFrame, columns: list[str]) -> pd.DataFrame:
-    """Convert numeric-looking text columns (for example with commas) to numbers."""
-    out = df.copy()
-    for col in columns:
-        out[col] = (
-            out[col]
-            .astype(str)
-            .str.replace(",", "", regex=False)
-            .str.strip()
-            .replace({"": np.nan, "nan": np.nan, "None": np.nan})
-        )
-        out[col] = pd.to_numeric(out[col], errors="coerce")
-    return out
-
-
 def add_engineered_columns(df: pd.DataFrame) -> pd.DataFrame:
     """Add date and ridership share features."""
     df = df.copy()
@@ -213,10 +198,16 @@ def main() -> None:
     df = pd.read_csv(RAW_PATH)
     df = clean_column_names(df)
     df["service_date"] = pd.to_datetime(df["service_date"])
-
-    # Ensure ridership columns are numeric even when raw file has comma separators
     numeric_cols = ["bus", "rail_boardings", "total_rides"]
-    df = coerce_numeric_columns(df, numeric_cols)
+
+    for col in numeric_cols:
+        df[col] = (
+            df[col]
+            .astype(str)
+            .str.replace(",", "", regex=False)
+            .str.strip()
+        )
+    df[col] = pd.to_numeric(df[col], errors="coerce")
 
     # 4-5) Validate totals + features
     validated = validate_totals(df)
